@@ -41,24 +41,17 @@ public class SubsonicHttpClient
             throw new ArgumentException("Path cannot be null or whitespace.", nameof(relativePath));
 
         relativePath = AppendQueryString(relativePath, parameters);
-
-        if (parameters is {Count: > 0})
-        {
-            var queryString = string.Join("&",
-                parameters.Select(p => $"{Uri.EscapeDataString(p.Key)}={Uri.EscapeDataString(p.Value)}"));
-            relativePath = $"{relativePath}?{queryString}";
-        }
         
-        _logger.LogDebug($"Executing method {method} with path {relativePath}");
+        _logger.LogInformation("Executing {Method} on {RelativePath}", method, relativePath);
 
         var requestMessage = CreateHttpRequestMessage(method, relativePath, data);
-
+        
         try
         {
             var response = await _httpClient.SendAsync(requestMessage);
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-            
+            _logger.LogInformation("response: {Substring}", responseContent[..Math.Min(150, responseContent.Length)]);
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -143,7 +136,7 @@ public class SubsonicHttpClient
 
     private void SetRequiredParameters(HttpRequestMessage requestMessage)
     {
-        var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+        var query = System.Web.HttpUtility.ParseQueryString(requestMessage.RequestUri.Query);
         query[ApiVersionParameter] = _serverConfiguration.ApiVersion;
         query[ClientNameParameter] = ServerConfiguration.AppName;
         query[FormatParameter] = Format;
@@ -187,7 +180,7 @@ public class SubsonicHttpClient
     /// <param name="musicFolderId">The ID of the music folder. If null or empty, all folders are considered.</param>
     /// <param name="modifiedSince">The date and time to filter indexes modified since that date. If null, no time-based filtering is applied.</param>
     /// <returns>A task that contains a collection of <see cref="Index"/>.</returns>
-    public async Task<IEnumerable<Index>> GetIndexes(string? musicFolderId, DateTime? modifiedSince)
+    public async Task<IEnumerable<Index>> GetIndexes(string? musicFolderId = null, DateTime? modifiedSince = null)
     {
         var queryParameters = new List<string>();
 
