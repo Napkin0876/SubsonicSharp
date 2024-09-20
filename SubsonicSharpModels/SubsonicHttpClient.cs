@@ -31,7 +31,6 @@ public class SubsonicHttpClient
         _subsonicAuth = userToken;
         _httpClient = httpClient;
         _httpClient.Timeout = TimeSpan.FromSeconds(60);
-        //_httpClient.BaseAddress = new Uri(_serverConfiguration.BaseUrl());
         _logger = logger;
     }
 
