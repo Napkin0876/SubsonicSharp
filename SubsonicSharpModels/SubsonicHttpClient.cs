@@ -305,7 +305,7 @@ public class SubsonicHttpClient
     }
 
     /// <summary>
-    ///   Returns artist info with biography, image URLs and similar artists, using data from last.fm.  
+    /// Returns artist info with biography, image URLs and similar artists, using data from last.fm.  
     /// </summary>
     /// <param name="id">The artist, album or song ID. Required.</param>
     /// <param name="count">Max number of similar artists to return.</param>
@@ -320,7 +320,7 @@ public class SubsonicHttpClient
     }
 
     /// <summary>
-    ///    Similar to <see cref="GetArtistInfo"/>, but organizes music according to ID3 tags. AKA GetArtistInfo2
+    /// Similar to <see cref="GetArtistInfo"/>, but organizes music according to ID3 tags. AKA GetArtistInfo2
     /// </summary>
     /// <param name="id">The artist, album or song ID. Required.</param>
     /// <param name="count">Max number of similar artists to return.</param>
@@ -440,6 +440,11 @@ public class SubsonicHttpClient
 
     #region Playlists
 
+    /// <summary>
+    /// Returns all playlists a user is allowed to play. 
+    /// </summary>
+    /// <param name="userName">Optional</param>
+    /// <returns>A task containing a collection of <see cref="Playlist"/>.</returns>
     public async Task<IEnumerable<Playlist>> GetPlaylists(string? userName = null)
     {
         var parameters = new List<KeyValuePair<string, string>>();
@@ -454,16 +459,131 @@ public class SubsonicHttpClient
         return response.Playlists.Playlist;
     }
 
-    public async Task<IEnumerable<Playlist>> GetPlaylist(string id)
+    /// <summary>
+    /// Returns a listing of files in a saved playlist. 
+    /// </summary>
+    /// <param name="playlistId">Required</param>
+    /// <returns>A task containing a collection of <see cref="Playlist"/>.</returns>
+    public async Task<IEnumerable<Playlist>> GetPlaylist(string playlistId)
     {
         var parameters = new List<KeyValuePair<string, string>>();
 
-        parameters.Add(new KeyValuePair<string, string>(UserNameParameter, id));
+        parameters.Add(new KeyValuePair<string, string>(UserNameParameter, playlistId));
 
         var response =
             await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "rest/getPlaylist", parameters: parameters);
 
         return response.Playlists.Playlist;
+    }
+
+    /// <summary>
+    /// Creates a playlist.  
+    /// </summary>
+    /// <param name="name">Required</param>
+    /// <param name="songIds">Optional. The song ids to include in the new playlist</param>
+    /// <returns>A task containing the newly created <see cref="Playlist"/>.</returns>
+    public async Task<Playlist> CreatePlaylist(string name, IEnumerable<string>? songIds = null)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("name", name)
+        };
+
+        if (songIds != null)
+        {
+            parameters.AddRange(songIds.Select(id => new KeyValuePair<string, string>("songId", id)));
+        }
+
+        var response =
+            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "/rest/createPlaylist", null, parameters);
+        return response.Playlist;
+    }
+
+    /// <summary>
+    /// Replaces an existing playlist.  
+    /// </summary>
+    /// <param name="playlistId">Required</param>
+    /// <param name="songIds">Optional. The song ids to include the new version of the playlist</param>
+    /// <returns>A task containing the newly created <see cref="Playlist"/>.</returns>
+    public async Task<Playlist> ReplacePlaylist(string playlistId, IEnumerable<string>? songIds = null)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("playlistId", playlistId)
+        };
+
+        if (songIds != null)
+        {
+            parameters.AddRange(songIds.Select(id => new KeyValuePair<string, string>("songId", id)));
+        }
+
+        var response =
+            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "/rest/createPlaylist", null, parameters);
+        return response.Playlist;
+    }
+
+    /// <summary>
+    /// Updates a playlist. Only the owner of a playlist is allowed to update it.   
+    /// </summary>
+    /// <param name="playlistId">Required</param>
+    /// <param name="name">Optional. The human-readable name of the playlist.</param>
+    /// <param name="comment">Optional. The playlist comment.</param>
+    /// <param name="isPublic">Optional. Defaults to true</param>
+    /// <param name="songIds">Optional. The song ids to add to the playlist</param>
+    /// <param name="songIndexesToRemove">Optional. List of songs to remove from the playlist. Identified by the zero-based index of the entry within the playlist.</param>
+    /// <returns>A bool indicating success</returns>
+    public async Task<bool> UpdatePlaylist(string playlistId, string? name = null, string? comment = null,
+        bool? isPublic = true, IEnumerable<string>? songIds = null, IEnumerable<string>? songIndexesToRemove = null)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", playlistId)
+        };
+
+        if (!string.IsNullOrEmpty(name))
+            parameters.Add(new KeyValuePair<string, string>("name", name));
+        if (!string.IsNullOrEmpty(comment))
+            parameters.Add(new KeyValuePair<string, string>("comment", comment));
+        if (isPublic.HasValue)
+            parameters.Add(new KeyValuePair<string, string>("public", isPublic.Value.ToString().ToLower()));
+
+        if (songIds != null)
+        {
+            parameters.AddRange(songIds.Select(songId => new KeyValuePair<string, string>("songId", songId)));
+        }
+
+        if (songIndexesToRemove != null)
+        {
+            parameters.AddRange(songIndexesToRemove.Select(index =>
+                new KeyValuePair<string, string>("songIndexToRemove", index)));
+        }
+
+        try
+        {
+            var response = await ExecuteAsync<BaseResponse>(HttpMethod.Post, "updatePlaylist", null, parameters);
+            return response.IsSuccess();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating playlist with ID {PlaylistId}", playlistId);
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Deletes an existing playlist.  
+    /// </summary>
+    /// <param name="playlistId">Required</param>
+    /// <returns>A bool indicating success</returns>
+    public async Task<bool> DeletePlaylist(string playlistId)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", playlistId)
+        };
+
+        var response = await ExecuteAsync<BaseResponse>(HttpMethod.Delete, "/rest/deletePlaylist", null, parameters);
+        return response.IsSuccess();
     }
 
     #endregion
