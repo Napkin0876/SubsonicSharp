@@ -213,11 +213,8 @@ public class SubsonicHttpClient
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
 
-        var response = await ExecuteAsync<GetMusicDirectoryResponse>(HttpMethod.Get, $"getMusicDirectory",
-            parameters: new List<KeyValuePair<string, string>>
-            {
-                new("id", id)
-            });
+        var response = await ExecuteAsync<GetMusicDirectoryResponse>(HttpMethod.Get, "getMusicDirectory",
+            parameters: [new("id", id)]);
 
         return response.Directory;
     }
@@ -454,7 +451,7 @@ public class SubsonicHttpClient
         }
 
         var response =
-            await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "rest/getPlaylists", parameters: parameters);
+            await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "getPlaylists", parameters: parameters);
 
         return response.Playlists.Playlist;
     }
@@ -471,7 +468,7 @@ public class SubsonicHttpClient
         parameters.Add(new KeyValuePair<string, string>(UserNameParameter, playlistId));
 
         var response =
-            await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "rest/getPlaylist", parameters: parameters);
+            await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "getPlaylist", parameters: parameters);
 
         return response.Playlists.Playlist;
     }
@@ -495,7 +492,7 @@ public class SubsonicHttpClient
         }
 
         var response =
-            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "/rest/createPlaylist", null, parameters);
+            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "createPlaylist", null, parameters);
         return response.Playlist;
     }
 
@@ -518,7 +515,7 @@ public class SubsonicHttpClient
         }
 
         var response =
-            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "/rest/createPlaylist", null, parameters);
+            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "createPlaylist", null, parameters);
         return response.Playlist;
     }
 
@@ -582,7 +579,40 @@ public class SubsonicHttpClient
             new("id", playlistId)
         };
 
-        var response = await ExecuteAsync<BaseResponse>(HttpMethod.Delete, "/rest/deletePlaylist", null, parameters);
+        var response = await ExecuteAsync<BaseResponse>(HttpMethod.Delete, "deletePlaylist", null, parameters);
+        return response.IsSuccess();
+    }
+
+    #endregion
+
+    #region MediaAnnotation
+
+    public async Task<bool> Star(IEnumerable<string>? songIds, IEnumerable<string>? albumIds, IEnumerable<string>? artistIds = null)
+    {
+        if (songIds == null && albumIds == null && artistIds == null)
+        {
+            throw new ArgumentException("At least one of songIds, albumIds, or artistIds must be provided.");
+        }
+
+        var parameters = new List<KeyValuePair<string, string>>();
+        
+        if (songIds != null)
+        {
+            parameters.AddRange(songIds.Select(id => new KeyValuePair<string, string>("id", id)));
+        }
+
+        if (albumIds != null)
+        {
+            parameters.AddRange(albumIds.Select(id => new KeyValuePair<string, string>("albumId", id)));
+        }
+
+        if (artistIds != null)
+        {
+            parameters.AddRange(artistIds.Select(id => new KeyValuePair<string, string>("artistId", id)));
+        }
+
+        var response = await ExecuteAsync<BaseResponse>(HttpMethod.Get, "star", parameters: parameters);
+        
         return response.IsSuccess();
     }
 
