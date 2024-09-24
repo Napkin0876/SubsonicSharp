@@ -97,3 +97,18 @@ public record SearchResult
     [JsonPropertyName("album")] public IEnumerable<Album> Album { get; set; }
     [JsonPropertyName("song")] public IEnumerable<Song> Song { get; set; }
 }
+
+public class GetPlaylistsResponse : BaseResponse
+{
+    [JsonPropertyName("playlists")] public PlaylistList Playlists { get; set; }
+}
+
+public record PlaylistList
+{
+    [JsonPropertyName("playlist")] public IEnumerable<Playlist> Playlist { get; set; }
+}
+
+public class GetPlaylistResponse : BaseResponse
+{
+    [JsonPropertyName("playlist")] public Playlist Playlist { get; set; }
+}

@@ -41,11 +41,11 @@ public class SubsonicHttpClient
             throw new ArgumentException("Path cannot be null or whitespace.", nameof(relativePath));
 
         relativePath = AppendQueryString(relativePath, parameters);
-        
+
         _logger.LogInformation("Executing {Method} on {RelativePath}", method, relativePath);
 
         var requestMessage = CreateHttpRequestMessage(method, relativePath, data);
-        
+
         try
         {
             var response = await _httpClient.SendAsync(requestMessage);
@@ -56,7 +56,7 @@ public class SubsonicHttpClient
             {
                 PropertyNameCaseInsensitive = true
             };
-           
+
             var result = JsonSerializer.Deserialize<SubsonicApiResponse<T>>(responseContent, options) ??
                          throw new JsonException($"Failed to deserialize response content: {responseContent}");
 
@@ -155,8 +155,8 @@ public class SubsonicHttpClient
 
     public async Task<BaseResponse> Ping()
     {
-        var result =  await ExecuteAsync<BaseResponse>(HttpMethod.Get, "ping");
-        
+        var result = await ExecuteAsync<BaseResponse>(HttpMethod.Get, "ping");
+
         return result;
     }
 
@@ -391,9 +391,79 @@ public class SubsonicHttpClient
                 new KeyValuePair<string, string>("musicFolderId", request.MusicFolderId.Value.ToString()));
         }
 
-        var relativePath = "search2";
+        const string relativePath = "search2";
         var response = await ExecuteAsync<Search3Response>(HttpMethod.Get, relativePath, null, queryParameters);
         return response.SearchResult;
+    }
+
+    #endregion
+
+    #region AlbumSonglists
+
+    /// <summary>
+    ///  Returns starred songs, albums and artists.   
+    /// </summary>
+    /// <param name="musicFolderId">Optional</param>
+    /// <returns>A task containing <see cref="SearchResult"/>.</returns>
+    public async Task<SearchResult> GetStarred(string? musicFolderId = null)
+    {
+        var parameters = new List<KeyValuePair<string, string>>();
+
+        if (!string.IsNullOrEmpty(musicFolderId))
+        {
+            parameters.Add(new KeyValuePair<string, string>("musicFolderId", musicFolderId));
+        }
+
+        var response = await ExecuteAsync<Search3Response>(HttpMethod.Get, "getStarred", null, parameters);
+        return response.SearchResult;
+    }
+
+    /// <summary>
+    ///   Similar to  <see cref="GetStarred"/>, but organizes music according to ID3 tags.   
+    /// </summary>
+    /// <param name="musicFolderId">Optional</param>
+    /// <returns>A task containing <see cref="SearchResult"/>.</returns>
+    public async Task<SearchResult> GetStarred2(string? musicFolderId = null)
+    {
+        var parameters = new List<KeyValuePair<string, string>>();
+
+        if (!string.IsNullOrEmpty(musicFolderId))
+        {
+            parameters.Add(new KeyValuePair<string, string>("musicFolderId", musicFolderId));
+        }
+
+        var response = await ExecuteAsync<Search3Response>(HttpMethod.Get, "getStarred2", null, parameters);
+        return response.SearchResult;
+    }
+
+    #endregion
+
+    #region Playlists
+
+    public async Task<IEnumerable<Playlist>> GetPlaylists(string? userName = null)
+    {
+        var parameters = new List<KeyValuePair<string, string>>();
+        if (!string.IsNullOrWhiteSpace(userName))
+        {
+            parameters.Add(new KeyValuePair<string, string>(UserNameParameter, userName));
+        }
+
+        var response =
+            await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "rest/getPlaylists", parameters: parameters);
+
+        return response.Playlists.Playlist;
+    }
+
+    public async Task<IEnumerable<Playlist>> GetPlaylist(string id)
+    {
+        var parameters = new List<KeyValuePair<string, string>>();
+
+        parameters.Add(new KeyValuePair<string, string>(UserNameParameter, id));
+
+        var response =
+            await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "rest/getPlaylist", parameters: parameters);
+
+        return response.Playlists.Playlist;
     }
 
     #endregion

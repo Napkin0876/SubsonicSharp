@@ -57,7 +57,7 @@ public record Song
     [JsonPropertyName("musicBrainzId")]
     public string MusicBrainzId { get; set; }
     [JsonPropertyName("]")]
-    public Genre[] Genres { get; set; }
+    public IEnumerable<Genre> Genres { get; set; }
     [JsonPropertyName("replayGain")]
     public ReplayGain ReplayGain { get; set; }
     [JsonPropertyName("channelCount")]
