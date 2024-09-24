@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -587,6 +588,14 @@ public class SubsonicHttpClient
 
     #region MediaAnnotation
 
+    /// <summary>
+    ///  Attaches a star to a song, album or artist.
+    ///  At least one of songIds, albumIds, or artistIds must be provided
+    /// </summary>
+    /// <param name="songIds">Optional</param>
+    /// <param name="albumIds">Optional</param>
+    /// <param name="artistIds">Optional</param>
+    /// <returns>A bool indicating success</returns>
     public async Task<bool> Star(IEnumerable<string>? songIds, IEnumerable<string>? albumIds, IEnumerable<string>? artistIds = null)
     {
         if (songIds == null && albumIds == null && artistIds == null)
@@ -615,6 +624,69 @@ public class SubsonicHttpClient
         
         return response.IsSuccess();
     }
+    
+    /// <summary>
+    ///  Removes the star from a song, album or artist. 
+    ///  At least one of songIds, albumIds, or artistIds must be provided
+    /// </summary>
+    /// <param name="songIds">Optional</param>
+    /// <param name="albumIds">Optional</param>
+    /// <param name="artistIds">Optional</param>
+    /// <returns>A bool indicating success</returns>
+    public async Task<bool> UnStar(IEnumerable<string>? songIds, IEnumerable<string>? albumIds, IEnumerable<string>? artistIds = null)
+    {
+        if (songIds == null && albumIds == null && artistIds == null)
+        {
+            throw new ArgumentException("At least one of songIds, albumIds, or artistIds must be provided.");
+        }
 
+        var parameters = new List<KeyValuePair<string, string>>();
+        
+        if (songIds != null)
+        {
+            parameters.AddRange(songIds.Select(id => new KeyValuePair<string, string>("id", id)));
+        }
+
+        if (albumIds != null)
+        {
+            parameters.AddRange(albumIds.Select(id => new KeyValuePair<string, string>("albumId", id)));
+        }
+
+        if (artistIds != null)
+        {
+            parameters.AddRange(artistIds.Select(id => new KeyValuePair<string, string>("artistId", id)));
+        }
+
+        var response = await ExecuteAsync<BaseResponse>(HttpMethod.Get, "unstar", parameters: parameters);
+        
+        return response.IsSuccess();
+    }
+
+    /// <summary>
+    ///   Sets the rating for a music file. 
+    /// </summary>
+    /// <param name="id">Required. A string which uniquely identifies the file (song) or folder (album/artist) to rate.</param>
+    /// <param name="rating">Required. The rating between 1 and 5 (inclusive), or 0 to remove the rating.</param>
+    /// <returns>A bool indicating success</returns>
+    public async Task<bool> SetRating(string id, double rating = 0)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            throw new ArgumentException("Song ID cannot be null or whitespace.", nameof(id));
+        
+        if (rating is < 0 or > 5)
+            throw new ArgumentOutOfRangeException(nameof(rating), "Rating must be between 0 and 5.");
+        
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", id),
+            new("rating", rating.ToString(CultureInfo.InvariantCulture))
+        };
+        
+        var response = await ExecuteAsync<BaseResponse>(HttpMethod.Post, "setRating", null, parameters);
+        return response.IsSuccess();
+    }
+
+    
+    
     #endregion
 }
