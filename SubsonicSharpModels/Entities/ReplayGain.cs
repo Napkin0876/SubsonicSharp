@@ -9,7 +9,7 @@ public record ReplayGain
     [JsonPropertyName("albumGain")]
     public double AlbumGain { get; set; }
     [JsonPropertyName("trackPeak")]
-    public int TrackPeak { get; set; }
+    public double TrackPeak { get; set; }
     [JsonPropertyName("albumPeak")]
-    public int AlbumPeak { get; set; }
+    public double AlbumPeak { get; set; }
 }
