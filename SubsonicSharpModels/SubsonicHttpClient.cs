@@ -215,7 +215,7 @@ public class SubsonicHttpClient
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
 
         var response = await ExecuteAsync<GetMusicDirectoryResponse>(HttpMethod.Get, "getMusicDirectory",
-            parameters: [new("id", id)]);
+            parameters: [new KeyValuePair<string, string>("id", id)]);
 
         return response.Directory;
     }
@@ -412,7 +412,7 @@ public class SubsonicHttpClient
             parameters.Add(new KeyValuePair<string, string>("musicFolderId", musicFolderId));
         }
 
-        var response = await ExecuteAsync<Search3Response>(HttpMethod.Get, "getStarred", null, parameters);
+        var response = await ExecuteAsync<GetStarredResponse>(HttpMethod.Get, "getStarred", null, parameters);
         return response.SearchResult;
     }
 
@@ -430,8 +430,45 @@ public class SubsonicHttpClient
             parameters.Add(new KeyValuePair<string, string>("musicFolderId", musicFolderId));
         }
 
-        var response = await ExecuteAsync<Search3Response>(HttpMethod.Get, "getStarred2", null, parameters);
+        var response = await ExecuteAsync<GetStarred2Response>(HttpMethod.Get, "getStarred2", null, parameters);
         return response.SearchResult;
+    }
+
+    public async Task<IEnumerable<Song>> GetRandomSongs(int? size = 10, string? genre = null, int? fromYear = null, int? toYear = null,
+        string? musicFolderId = null)
+    {
+        var parameters = new List<KeyValuePair<string, string>>();
+
+        if (size.HasValue)
+        {
+            parameters.Add(new KeyValuePair<string, string>("size", size.Value.ToString()));
+        }
+
+        if (!string.IsNullOrEmpty(genre))
+        {
+            parameters.Add(new KeyValuePair<string, string>("genre", genre));
+        }
+
+        if (fromYear.HasValue)
+        {
+            parameters.Add(new KeyValuePair<string, string>("fromYear", fromYear.Value.ToString()));
+        }
+
+        if (toYear.HasValue)
+        {
+            parameters.Add(new KeyValuePair<string, string>("toYear", toYear.Value.ToString()));
+        }
+
+        if (!string.IsNullOrEmpty(musicFolderId))
+        {
+            parameters.Add(new KeyValuePair<string, string>("musicFolderId", musicFolderId));
+        }
+
+        // Fetch the random songs using ExecuteAsync method
+        var response = await ExecuteAsync<GetRandomSongsResponse>(HttpMethod.Get, "getRandomSongs", parameters: parameters);
+            
+        // Return the list of Song entities
+        return response?.Songs?.Song;
     }
 
     #endregion
@@ -493,7 +530,7 @@ public class SubsonicHttpClient
         }
 
         var response =
-            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "createPlaylist", null, parameters);
+            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Post, "createPlaylist", null, parameters);
         return response.Playlist;
     }
 
@@ -535,7 +572,7 @@ public class SubsonicHttpClient
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
-            new("id", playlistId)
+            new("playlistId", playlistId)
         };
 
         if (!string.IsNullOrEmpty(name))
