@@ -91,6 +91,26 @@ public class Search3Response : BaseResponse
     [JsonPropertyName("searchResult3")] public SearchResult SearchResult { get; set; }
 }
 
+public class GetStarredResponse : BaseResponse
+{
+    [JsonPropertyName("starred")] public SearchResult SearchResult { get; set; }
+}
+
+public class GetStarred2Response : BaseResponse
+{
+    [JsonPropertyName("starred2")] public SearchResult SearchResult { get; set; }
+}
+
+public class GetRandomSongsResponse : BaseResponse
+{
+    [JsonPropertyName("randomSongs")] public SongList Songs { get; set; }
+}
+
+public record SongList
+{
+    [JsonPropertyName("song")] public IEnumerable<Song> Song { get; set; }
+}
+
 public record SearchResult
 {
     [JsonPropertyName("artist")] public IEnumerable<Artist> Artist { get; set; }
