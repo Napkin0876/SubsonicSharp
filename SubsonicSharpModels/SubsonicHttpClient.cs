@@ -53,12 +53,8 @@ public class SubsonicHttpClient
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("response: {Substring}", responseContent[..Math.Min(150, responseContent.Length)]);
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var result = JsonSerializer.Deserialize<SubsonicApiResponse<T>>(responseContent, options) ??
+            
+            var result = JsonSerializer.Deserialize<SubsonicApiResponse<T>>(responseContent) ??
                          throw new JsonException($"Failed to deserialize response content: {responseContent}");
 
             if (!result.SubsonicResponse.IsSuccess())
@@ -183,23 +179,20 @@ public class SubsonicHttpClient
     /// <returns>A task that contains a collection of <see cref="Index"/>.</returns>
     public async Task<IEnumerable<Index>> GetIndexes(string? musicFolderId = null, DateTime? modifiedSince = null)
     {
-        var queryParameters = new List<string>();
+        var queryParameters = new List<KeyValuePair<string, string>>();
 
         if (!string.IsNullOrEmpty(musicFolderId))
         {
-            queryParameters.Add($"musicFolderId={musicFolderId}");
+            queryParameters.Add(new KeyValuePair<string, string>("musicFolderId",musicFolderId));
         }
 
         if (modifiedSince.HasValue)
         {
             var millisecondsSinceEpoch = new DateTimeOffset(modifiedSince.Value).ToUnixTimeMilliseconds();
-            queryParameters.Add($"modifiedSince={millisecondsSinceEpoch}");
+            queryParameters.Add(new KeyValuePair<string, string>("ifModifiedSince",millisecondsSinceEpoch.ToString()));
         }
 
-        var queryString = string.Join("&", queryParameters);
-        var requestUri = string.IsNullOrEmpty(queryString) ? "getIndexes" : $"getIndexes?{queryString}";
-
-        var response = await ExecuteAsync<GetIndexesResponse>(HttpMethod.Get, requestUri);
+        var response = await ExecuteAsync<GetIndexesResponse>(HttpMethod.Get, "getIndexes", null, queryParameters);
         return response.Indexes.Index;
     }
 
