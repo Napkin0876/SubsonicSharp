@@ -263,7 +263,18 @@ public class SubsonicHttpClient
     /// <returns>A task containing a <see cref="Album"/>.</returns>
     public async Task<Album> GetAlbum(string id)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(id))
+        {
+            throw new ArgumentNullException(nameof(id), "Album ID cannot be null or empty.");
+        }
+
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", id),
+        };
+    
+        var result = await ExecuteAsync<GetAlbumResponse>(HttpMethod.Get, "getAlbum", parameters: parameters);
+        return result.Album;
     }
 
     /// <summary>
@@ -273,7 +284,13 @@ public class SubsonicHttpClient
     /// <returns>A task containing a <see cref="Song"/>.</returns>
     public async Task<Song> GetSong(string id)
     {
-        throw new NotImplementedException();
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", id)
+        };
+
+        var response = await ExecuteAsync<GetSongResponse>(HttpMethod.Get, "getSong", null, parameters);
+        return response.Song;
     }
 
     /// <summary>
@@ -301,13 +318,21 @@ public class SubsonicHttpClient
     /// <param name="id">The artist, album or song ID. Required.</param>
     /// <param name="count">Max number of similar artists to return.</param>
     /// <param name="includeNotPresent">Whether to return artists that are not present in the media library.</param>
-    /// <returns>A task containing a <see cref="Artist"/>.</returns>
-    public async Task<Artist> GetArtistInfo(string id, int? count = 20, bool? includeNotPresent = false)
+    /// <returns>A task containing a <see cref="ArtistInfo"/>.</returns>
+    public async Task<ArtistInfo> GetArtistInfo(string id, int? count = 20, bool? includeNotPresent = false)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
 
-        throw new NotImplementedException();
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", id),
+            new("count", count.ToString()!),
+            new("includeNotPresent", includeNotPresent.ToString()!.ToLower())
+        };
+        
+        var response = await ExecuteAsync<GetArtistInfoResponse>(HttpMethod.Get, "getArtistInfo", null, parameters);
+        return response.ArtistInfo;
     }
 
     /// <summary>
@@ -317,12 +342,20 @@ public class SubsonicHttpClient
     /// <param name="count">Max number of similar artists to return.</param>
     /// <param name="includeNotPresent">Whether to return artists that are not present in the media library.</param>
     /// <returns>A task containing a <see cref="Artist"/>.</returns>
-    public async Task<Artist> GetArtistInfoAlternate(string id, int? count = 20, bool? includeNotPresent = false)
+    public async Task<ArtistInfo> GetArtistInfo2(string id, int? count = 20, bool? includeNotPresent = false)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
 
-        throw new NotImplementedException();
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", id),
+            new("count", count.ToString()!),
+            new("includeNotPresent", includeNotPresent.ToString()!.ToLower())
+        };
+        
+        var response = await ExecuteAsync<GetArtistInfo2Response>(HttpMethod.Get, "getArtistInfo", null, parameters);
+        return response.ArtistInfo;
     }
 
     #endregion
