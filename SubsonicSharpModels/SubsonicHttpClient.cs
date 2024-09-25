@@ -341,7 +341,7 @@ public class SubsonicHttpClient
     /// <param name="id">The artist, album or song ID. Required.</param>
     /// <param name="count">Max number of similar artists to return.</param>
     /// <param name="includeNotPresent">Whether to return artists that are not present in the media library.</param>
-    /// <returns>A task containing a <see cref="Artist"/>.</returns>
+    /// <returns>A task containing a <see cref="ArtistInfo"/>.</returns>
     public async Task<ArtistInfo> GetArtistInfo2(string id, int? count = 20, bool? includeNotPresent = false)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -356,6 +356,52 @@ public class SubsonicHttpClient
         
         var response = await ExecuteAsync<GetArtistInfo2Response>(HttpMethod.Get, "getArtistInfo", null, parameters);
         return response.ArtistInfo;
+    }
+
+    /// <summary>
+    ///  Returns a random collection of songs from the given artist and similar artists, using data from last.fm. Typically used for artist radio features. 
+    /// </summary>
+    /// <param name="id">Required. The artist, album or song ID. Required.</param>
+    /// <param name="count">Optional. Max number of similar artists to return. Defaults to 50.</param>
+    /// <returns>A task containing a collection of <see cref="Song"/>.</returns>
+    public async Task<IEnumerable<Song>> GetSimilarSongs(string id, int? count = 50)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", id)
+        };
+
+        if (count.HasValue)
+        {
+            parameters.Add(new KeyValuePair<string, string>("count", count.Value.ToString()));
+        }
+
+        var response = await ExecuteAsync<GetSimilarSongsResponse>(HttpMethod.Get, "getSimilarSongs", null, parameters);
+
+        return response.Songs.Song;
+    }
+    
+    /// <summary>
+    ///   Similar to <see cref="GetSimilarSongs"/>, but organizes music according to ID3 tags.  
+    /// </summary>
+    /// <param name="id">Required. The artist, album or song ID. Required.</param>
+    /// <param name="count">Optional. Max number of similar artists to return. Defaults to 50.</param>
+    /// <returns>A task containing a collection of <see cref="Song"/>.</returns>
+    public async Task<IEnumerable<Song>> GetSimilarSongs2(string id, int? count = 50)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("id", id)
+        };
+
+        if (count.HasValue)
+        {
+            parameters.Add(new KeyValuePair<string, string>("count", count.Value.ToString()));
+        }
+
+        var response = await ExecuteAsync<GetSimilarSongs2Response>(HttpMethod.Get, "getSimilarSongs", null, parameters);
+
+        return response.Songs.Song;
     }
 
     #endregion

@@ -126,6 +126,16 @@ public class GetRandomSongsResponse : BaseResponse
     [JsonPropertyName("randomSongs")] public SongList Songs { get; set; }
 }
 
+public class GetSimilarSongsResponse : BaseResponse
+{
+    [JsonPropertyName("similarSongs")] public SongList Songs { get; set; }
+}
+
+public class GetSimilarSongs2Response : BaseResponse
+{
+    [JsonPropertyName("similarSongs2")] public SongList Songs { get; set; }
+}
+
 public record SongList
 {
     [JsonPropertyName("song")] public IEnumerable<Song> Song { get; set; }
