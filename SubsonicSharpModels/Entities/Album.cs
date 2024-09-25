@@ -1,31 +1,34 @@
+using System.Text.Json.Serialization;
+
 namespace SubsonicSharp.Entities;
 
 public record Album
 {
-    public string id { get; set; }
-    public string parent { get; set; }
-    public bool isDir { get; set; }
-    public string title { get; set; }
-    public string name { get; set; }
-    public string album { get; set; }
-    public string artist { get; set; }
-    public int year { get; set; }
-    public string genre { get; set; }
-    public string coverArt { get; set; }
-    public int duration { get; set; }
-    public string created { get; set; }
-    public string artistId { get; set; }
-    public int songCount { get; set; }
-    public bool isVideo { get; set; }
-    public int bpm { get; set; }
-    public string comment { get; set; }
-    public string sortName { get; set; }
-    public string mediaType { get; set; }
-    public string musicBrainzId { get; set; }
-    public IEnumerable<Genre> genres { get; set; }
-    public ReplayGain replayGain { get; set; }
-    public int channelCount { get; set; }
-    public int samplingRate { get; set; }
-    public int playCount { get; set; }
-    public string played { get; set; }
+    [JsonPropertyName("id")] public string Id { get; set; }
+    [JsonPropertyName("parent")] public string Parent { get; set; }
+    [JsonPropertyName("isDir")] public bool IsDir { get; set; }
+    [JsonPropertyName("title")] public string Title { get; set; }
+    [JsonPropertyName("name")] public string Name { get; set; }
+    [JsonPropertyName("album")] public string AlbumName { get; set; }
+    [JsonPropertyName("artist")] public string Artist { get; set; }
+    [JsonPropertyName("year")] public int Year { get; set; }
+    [JsonPropertyName("genre")] public string Genre { get; set; }
+    [JsonPropertyName("coverArt")] public string CoverArt { get; set; }
+    [JsonPropertyName("duration")] public int Duration { get; set; }
+    [JsonPropertyName("created")] public string Created { get; set; }
+    [JsonPropertyName("artistId")] public string ArtistId { get; set; }
+    [JsonPropertyName("songCount")] public int SongCount { get; set; }
+    [JsonPropertyName("isVideo")] public bool IsVideo { get; set; }
+    [JsonPropertyName("bpm")] public int Bpm { get; set; }
+    [JsonPropertyName("comment")] public string Comment { get; set; }
+    [JsonPropertyName("sortName")] public string SortName { get; set; }
+    [JsonPropertyName("mediaType")] public string MediaType { get; set; }
+    [JsonPropertyName("musicBrainzId")] public string MusicBrainzId { get; set; }
+    [JsonPropertyName("genres")] public IEnumerable<Genre> Genres { get; set; }
+    [JsonPropertyName("song")] public IEnumerable<Song> Song { get; set; }
+    [JsonPropertyName("replayGain")] public ReplayGain ReplayGain { get; set; }
+    [JsonPropertyName("channelCount")] public int ChannelCount { get; set; }
+    [JsonPropertyName("samplingRate")] public int SamplingRate { get; set; }
+    [JsonPropertyName("playCount")] public int PlayCount { get; set; }
+    [JsonPropertyName("played")] public string Played { get; set; }
 }
