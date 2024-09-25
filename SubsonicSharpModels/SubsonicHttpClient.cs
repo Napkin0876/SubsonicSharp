@@ -354,7 +354,7 @@ public class SubsonicHttpClient
             new("includeNotPresent", includeNotPresent.ToString()!.ToLower())
         };
         
-        var response = await ExecuteAsync<GetArtistInfo2Response>(HttpMethod.Get, "getArtistInfo", null, parameters);
+        var response = await ExecuteAsync<GetArtistInfo2Response>(HttpMethod.Get, "getArtistInfo2", null, parameters);
         return response.ArtistInfo;
     }
 
@@ -399,7 +399,7 @@ public class SubsonicHttpClient
             parameters.Add(new KeyValuePair<string, string>("count", count.Value.ToString()));
         }
 
-        var response = await ExecuteAsync<GetSimilarSongs2Response>(HttpMethod.Get, "getSimilarSongs", null, parameters);
+        var response = await ExecuteAsync<GetSimilarSongs2Response>(HttpMethod.Get, "getSimilarSongs2", null, parameters);
 
         return response.Songs.Song;
     }
