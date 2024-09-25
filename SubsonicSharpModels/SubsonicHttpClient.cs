@@ -389,7 +389,7 @@ public class SubsonicHttpClient
                 new KeyValuePair<string, string>("musicFolderId", request.MusicFolderId.Value.ToString()));
         }
 
-        const string relativePath = "search2";
+        const string relativePath = "search3";
         var response = await ExecuteAsync<Search3Response>(HttpMethod.Get, relativePath, null, queryParameters);
         return response.SearchResult;
     }

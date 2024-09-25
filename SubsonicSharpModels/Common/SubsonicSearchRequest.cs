@@ -16,7 +16,7 @@ namespace SubsonicSharp;
 public record SubsonicSearchRequest(
     [Required]
     string Query,
-    int? MusicFolderId,
+    int? MusicFolderId = null,
     int? ArtistCount = 20,
     int? ArtistOffset = 0,
     int? AlbumCount = 20,
