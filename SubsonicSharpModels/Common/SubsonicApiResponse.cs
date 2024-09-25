@@ -81,6 +81,26 @@ public class GetArtistResponse : BaseResponse
     [JsonPropertyName("artist")] public Artist Artist { get; set; }
 }
 
+public class GetArtistInfoResponse : BaseResponse
+{
+    [JsonPropertyName("artistInfo")] public ArtistInfo ArtistInfo { get; set; }
+}
+
+public class GetArtistInfo2Response : BaseResponse
+{
+    [JsonPropertyName("artistInfo2")] public ArtistInfo ArtistInfo { get; set; }
+}
+
+public class GetAlbumResponse : BaseResponse
+{
+    [JsonPropertyName("album")] public Album Album { get; set; }
+}
+
+public class GetSongResponse : BaseResponse
+{
+    [JsonPropertyName("song")] public Song Song { get; set; }
+}
+
 public class Search2Response : BaseResponse
 {
     [JsonPropertyName("searchResult2")] public SearchResult SearchResult { get; set; }
