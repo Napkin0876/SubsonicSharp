@@ -151,7 +151,7 @@ public class SubsonicHttpClient
 
     #region System
 
-    public async Task<BaseResponse> Ping()
+    public async Task<BaseResponse> PingAsync()
     {
         var result = await ExecuteAsync<BaseResponse>(HttpMethod.Get, "ping");
 
@@ -166,7 +166,7 @@ public class SubsonicHttpClient
     ///  Returns all configured top-level music folders. Takes no extra parameters. 
     /// </summary>
     /// <returns>A task that contains a collection of <see cref="MusicFolder"/>.</returns>
-    public async Task<IEnumerable<MusicFolder>> GetMusicFolders()
+    public async Task<IEnumerable<MusicFolder>> GetMusicFoldersAsync()
     {
         var folders = await ExecuteAsync<GetMusicFoldersResponse>(HttpMethod.Get, "getMusicFolders");
         return folders.MusicFolders.MusicFolder;
@@ -178,7 +178,7 @@ public class SubsonicHttpClient
     /// <param name="musicFolderId">The ID of the music folder. If null or empty, all folders are considered.</param>
     /// <param name="modifiedSince">The date and time to filter indexes modified since that date. If null, no time-based filtering is applied.</param>
     /// <returns>A task that contains a collection of <see cref="Index"/>.</returns>
-    public async Task<IEnumerable<Index>> GetIndexes(string? musicFolderId = null, DateTime? modifiedSince = null)
+    public async Task<IEnumerable<Index>> GetIndexesAsync(string? musicFolderId = null, DateTime? modifiedSince = null)
     {
         var queryParameters = new List<KeyValuePair<string, string>>();
 
@@ -203,7 +203,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="id">The ID of the music directory. Required.</param>
     /// <returns>A task containing a <see cref="MusicDirectory"/>.</returns>
-    public async Task<MusicDirectory> GetMusicDirectory(string id)
+    public async Task<MusicDirectory> GetMusicDirectoryAsync(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
@@ -220,7 +220,7 @@ public class SubsonicHttpClient
     /// <returns>
     /// A task containing a collection of <see cref="Genre"/>
     /// </returns>
-    public async Task<IEnumerable<Genre>> GetGenres()
+    public async Task<IEnumerable<Genre>> GetGenresAsync()
     {
         var response = await ExecuteAsync<GetGenresResponse>(HttpMethod.Get, "getGenres");
         return response.Genres.Genre;
@@ -232,7 +232,7 @@ public class SubsonicHttpClient
     /// <returns>
     /// A task containing a collection of <see cref="Index"/>
     /// </returns>
-    public async Task<IEnumerable<Index>> GetArtists()
+    public async Task<IEnumerable<Index>> GetArtistsAsync()
     {
         var response = await ExecuteAsync<GetArtistsResponse>(HttpMethod.Get, "getArtists");
         return response.Artists.Index;
@@ -243,7 +243,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="id">The ID of the artist. Required.</param>
     /// <returns>A task containing a <see cref="Artist"/>.</returns>
-    public async Task<Artist> GetArtist(string id)
+    public async Task<Artist> GetArtistAsync(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
@@ -262,7 +262,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="id">The ID of the album. Required.</param>
     /// <returns>A task containing a <see cref="Album"/>.</returns>
-    public async Task<Album> GetAlbum(string id)
+    public async Task<Album> GetAlbumAsync(string id)
     {
         if (string.IsNullOrEmpty(id))
         {
@@ -283,7 +283,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="id">The ID of the song. Required.</param>
     /// <returns>A task containing a <see cref="Song"/>.</returns>
-    public async Task<Song> GetSong(string id)
+    public async Task<Song> GetSongAsync(string id)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
@@ -298,7 +298,7 @@ public class SubsonicHttpClient
     ///  Returns all video files. 
     /// </summary>
     /// <returns>A task containing a collection of <see cref="Video"/>.</returns>
-    public async Task<Video> GetVideos()
+    public async Task<Video> GetVideosAsync()
     {
         throw new NotImplementedException();
     }
@@ -308,7 +308,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="id">The ID of the video. Required.</param>
     /// <returns>A task containing a <see cref="Video"/>.</returns>
-    public async Task<Video> GetVideoInfo(string id)
+    public async Task<Video> GetVideoInfoAsync(string id)
     {
         throw new NotImplementedException();
     }
@@ -320,7 +320,7 @@ public class SubsonicHttpClient
     /// <param name="count">Max number of similar artists to return.</param>
     /// <param name="includeNotPresent">Whether to return artists that are not present in the media library.</param>
     /// <returns>A task containing a <see cref="ArtistInfo"/>.</returns>
-    public async Task<ArtistInfo> GetArtistInfo(string id, int? count = 20, bool? includeNotPresent = false)
+    public async Task<ArtistInfo> GetArtistInfoAsync(string id, int? count = 20, bool? includeNotPresent = false)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
@@ -337,13 +337,13 @@ public class SubsonicHttpClient
     }
 
     /// <summary>
-    /// Similar to <see cref="GetArtistInfo"/>, but organizes music according to ID3 tags. AKA GetArtistInfo2
+    /// Similar to <see cref="GetArtistInfoAsync"/>, but organizes music according to ID3 tags. AKA GetArtistInfo2
     /// </summary>
     /// <param name="id">The artist, album or song ID. Required.</param>
     /// <param name="count">Max number of similar artists to return.</param>
     /// <param name="includeNotPresent">Whether to return artists that are not present in the media library.</param>
     /// <returns>A task containing a <see cref="ArtistInfo"/>.</returns>
-    public async Task<ArtistInfo> GetArtistInfo2(string id, int? count = 20, bool? includeNotPresent = false)
+    public async Task<ArtistInfo> GetArtistInfo2Async(string id, int? count = 20, bool? includeNotPresent = false)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Valid ID must be provided.", nameof(id));
@@ -365,7 +365,7 @@ public class SubsonicHttpClient
     /// <param name="id">Required. The artist, album or song ID. Required.</param>
     /// <param name="count">Optional. Max number of similar artists to return. Defaults to 50.</param>
     /// <returns>A task containing a collection of <see cref="Song"/>.</returns>
-    public async Task<IEnumerable<Song>> GetSimilarSongs(string id, int? count = 50)
+    public async Task<IEnumerable<Song>> GetSimilarSongsAsync(string id, int? count = 50)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
@@ -383,12 +383,12 @@ public class SubsonicHttpClient
     }
     
     /// <summary>
-    ///   Similar to <see cref="GetSimilarSongs"/>, but organizes music according to ID3 tags.  
+    ///   Similar to <see cref="GetSimilarSongsAsync"/>, but organizes music according to ID3 tags.  
     /// </summary>
     /// <param name="id">Required. The artist, album or song ID. Required.</param>
     /// <param name="count">Optional. Max number of similar artists to return. Defaults to 50.</param>
     /// <returns>A task containing a collection of <see cref="Song"/>.</returns>
-    public async Task<IEnumerable<Song>> GetSimilarSongs2(string id, int? count = 50)
+    public async Task<IEnumerable<Song>> GetSimilarSongs2Async(string id, int? count = 50)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
@@ -414,7 +414,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="request">A <see cref="SubsonicSearchRequest"/> containing parameters for the search.</param>
     /// <returns>A task containing <see cref="SearchResult"/>.</returns>
-    public async Task<SearchResult> Search2(SubsonicSearchRequest request)
+    public async Task<SearchResult> Search2Async(SubsonicSearchRequest request)
     {
         var queryParameters = new List<KeyValuePair<string, string>>
         {
@@ -439,11 +439,11 @@ public class SubsonicHttpClient
     }
 
     /// <summary>
-    ///   Similar to <see cref="Search2"/>, but organizes music according to ID3 tags.  
+    ///   Similar to <see cref="Search2Async"/>, but organizes music according to ID3 tags.  
     /// </summary>
     /// <param name="request">A <see cref="SubsonicSearchRequest"/> containing parameters for the search.</param>
     /// <returns>A task containing <see cref="SearchResult"/>.</returns>
-    public async Task<SearchResult> Search3(SubsonicSearchRequest request)
+    public async Task<SearchResult> Search3Async(SubsonicSearchRequest request)
     {
         var queryParameters = new List<KeyValuePair<string, string>>
         {
@@ -476,7 +476,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="musicFolderId">Optional</param>
     /// <returns>A task containing <see cref="SearchResult"/>.</returns>
-    public async Task<SearchResult> GetStarred(string? musicFolderId = null)
+    public async Task<SearchResult> GetStarredAsync(string? musicFolderId = null)
     {
         var parameters = new List<KeyValuePair<string, string>>();
 
@@ -490,11 +490,11 @@ public class SubsonicHttpClient
     }
 
     /// <summary>
-    ///   Similar to  <see cref="GetStarred"/>, but organizes music according to ID3 tags.   
+    ///   Similar to  <see cref="GetStarredAsync"/>, but organizes music according to ID3 tags.   
     /// </summary>
     /// <param name="musicFolderId">Optional</param>
     /// <returns>A task containing <see cref="SearchResult"/>.</returns>
-    public async Task<SearchResult> GetStarred2(string? musicFolderId = null)
+    public async Task<SearchResult> GetStarred2Async(string? musicFolderId = null)
     {
         var parameters = new List<KeyValuePair<string, string>>();
 
@@ -507,7 +507,7 @@ public class SubsonicHttpClient
         return response.SearchResult;
     }
 
-    public async Task<IEnumerable<Song>> GetRandomSongs(int? size = 10, string? genre = null, int? fromYear = null, int? toYear = null,
+    public async Task<IEnumerable<Song>> GetRandomSongsAsync(int? size = 10, string? genre = null, int? fromYear = null, int? toYear = null,
         string? musicFolderId = null)
     {
         var parameters = new List<KeyValuePair<string, string>>();
@@ -553,7 +553,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="userName">Optional</param>
     /// <returns>A task containing a collection of <see cref="Playlist"/>.</returns>
-    public async Task<IEnumerable<Playlist>> GetPlaylists(string? userName = null)
+    public async Task<IEnumerable<Playlist>> GetPlaylistsAsync(string? userName = null)
     {
         var parameters = new List<KeyValuePair<string, string>>();
         if (!string.IsNullOrWhiteSpace(userName))
@@ -572,7 +572,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="playlistId">Required</param>
     /// <returns>A task containing a collection of <see cref="Playlist"/>.</returns>
-    public async Task<IEnumerable<Playlist>> GetPlaylist(string playlistId)
+    public async Task<IEnumerable<Playlist>> GetPlaylistAsync(string playlistId)
     {
         var parameters = new List<KeyValuePair<string, string>>();
 
@@ -590,7 +590,7 @@ public class SubsonicHttpClient
     /// <param name="name">Required</param>
     /// <param name="songIds">Optional. The song ids to include in the new playlist</param>
     /// <returns>A task containing the newly created <see cref="Playlist"/>.</returns>
-    public async Task<Playlist> CreatePlaylist(string name, IEnumerable<string>? songIds = null)
+    public async Task<Playlist> CreatePlaylistAsync(string name, IEnumerable<string>? songIds = null)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
@@ -613,7 +613,7 @@ public class SubsonicHttpClient
     /// <param name="playlistId">Required</param>
     /// <param name="songIds">Optional. The song ids to include the new version of the playlist</param>
     /// <returns>A task containing the newly created <see cref="Playlist"/>.</returns>
-    public async Task<Playlist> ReplacePlaylist(string playlistId, IEnumerable<string>? songIds = null)
+    public async Task<Playlist> ReplacePlaylistAsync(string playlistId, IEnumerable<string>? songIds = null)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
@@ -640,7 +640,7 @@ public class SubsonicHttpClient
     /// <param name="songIds">Optional. The song ids to add to the playlist</param>
     /// <param name="songIndexesToRemove">Optional. List of songs to remove from the playlist. Identified by the zero-based index of the entry within the playlist.</param>
     /// <returns>A bool indicating success</returns>
-    public async Task<bool> UpdatePlaylist(string playlistId, string? name = null, string? comment = null,
+    public async Task<bool> UpdatePlaylistAsync(string playlistId, string? name = null, string? comment = null,
         bool? isPublic = true, IEnumerable<string>? songIds = null, IEnumerable<string>? songIndexesToRemove = null)
     {
         var parameters = new List<KeyValuePair<string, string>>
@@ -683,7 +683,7 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="playlistId">Required</param>
     /// <returns>A bool indicating success</returns>
-    public async Task<bool> DeletePlaylist(string playlistId)
+    public async Task<bool> DeletePlaylistAsync(string playlistId)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
@@ -706,7 +706,7 @@ public class SubsonicHttpClient
     /// <param name="albumIds">Optional</param>
     /// <param name="artistIds">Optional</param>
     /// <returns>A bool indicating success</returns>
-    public async Task<bool> Star(IEnumerable<string>? songIds, IEnumerable<string>? albumIds, IEnumerable<string>? artistIds = null)
+    public async Task<bool> StarAsync(IEnumerable<string>? songIds, IEnumerable<string>? albumIds, IEnumerable<string>? artistIds = null)
     {
         if (songIds == null && albumIds == null && artistIds == null)
         {
@@ -743,7 +743,7 @@ public class SubsonicHttpClient
     /// <param name="albumIds">Optional</param>
     /// <param name="artistIds">Optional</param>
     /// <returns>A bool indicating success</returns>
-    public async Task<bool> UnStar(IEnumerable<string>? songIds, IEnumerable<string>? albumIds, IEnumerable<string>? artistIds = null)
+    public async Task<bool> UnStarAsync(IEnumerable<string>? songIds, IEnumerable<string>? albumIds, IEnumerable<string>? artistIds = null)
     {
         if (songIds == null && albumIds == null && artistIds == null)
         {
@@ -778,7 +778,7 @@ public class SubsonicHttpClient
     /// <param name="id">Required. A string which uniquely identifies the file (song) or folder (album/artist) to rate.</param>
     /// <param name="rating">Required. The rating between 1 and 5 (inclusive), or 0 to remove the rating.</param>
     /// <returns>A bool indicating success</returns>
-    public async Task<bool> SetRating(string id, double rating = 0)
+    public async Task<bool> SetRatingAsync(string id, double rating = 0)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Song ID cannot be null or whitespace.", nameof(id));
@@ -809,7 +809,7 @@ public class SubsonicHttpClient
     /// <param name="song">Required</param>
     /// <param name="decodeHtml">Optional</param>
     /// <returns>A task containing the lyrics in string form. string.Empty if no lyrics are found</returns>
-    public async Task<string> GetLyrics(string artist, string song, bool decodeHtml = true)
+    public async Task<string> GetLyricsAsync(string artist, string song, bool decodeHtml = true)
     {
         var parameters = new List<KeyValuePair<string, string>>
         {
