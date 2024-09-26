@@ -56,6 +56,11 @@ public record GetMusicDirectoryResponse : BaseResponse
     [JsonPropertyName("directory")] public MusicDirectory? Directory { get; set; }
 }
 
+public record GetLyricsResponse : BaseResponse
+{
+    [JsonPropertyName("lyrics")] public Lyric? Lyrics { get; set; }
+}
+
 public record GetGenresResponse : BaseResponse
 {
     [JsonPropertyName("genres")] public GenreList? Genres { get; set; }

@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using SubsonicSharp.Entities;
+using SubsonicSharp.Extensions;
 using Index = SubsonicSharp.Entities.Index;
 
 namespace SubsonicSharp;
@@ -797,5 +798,32 @@ public class SubsonicHttpClient
 
     
     
+    #endregion
+
+    #region MediaRetrieval
+
+    /// <summary>
+    ///   Searches for and returns lyrics for a given song. 
+    /// </summary>
+    /// <param name="artist">Required</param>
+    /// <param name="song">Required</param>
+    /// <param name="decodeHtml">Optional</param>
+    /// <returns>A task containing the lyrics in string form. string.Empty if no lyrics are found</returns>
+    public async Task<string> GetLyrics(string artist, string song, bool decodeHtml = true)
+    {
+        var parameters = new List<KeyValuePair<string, string>>
+        {
+            new("artist", artist),
+            new("title", song)
+        };
+        
+        var response = await ExecuteAsync<GetLyricsResponse>(HttpMethod.Get, "getLyrics", parameters: parameters);
+        
+        if(decodeHtml)
+            return response?.Lyrics?.value.Decode() ?? string.Empty;
+        
+        return response?.Lyrics?.value ?? string.Empty;
+    }
+
     #endregion
 }
