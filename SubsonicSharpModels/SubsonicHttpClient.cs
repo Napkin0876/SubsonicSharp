@@ -572,16 +572,16 @@ public class SubsonicHttpClient
     /// </summary>
     /// <param name="playlistId">Required</param>
     /// <returns>A task containing a collection of <see cref="Playlist"/>.</returns>
-    public async Task<IEnumerable<Playlist>> GetPlaylistAsync(string playlistId)
+    public async Task<Playlist> GetPlaylistAsync(string playlistId)
     {
         var parameters = new List<KeyValuePair<string, string>>();
 
         parameters.Add(new KeyValuePair<string, string>(UserNameParameter, playlistId));
 
         var response =
-            await ExecuteAsync<GetPlaylistsResponse>(HttpMethod.Get, "getPlaylist", parameters: parameters);
+            await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "getPlaylist", parameters: parameters);
 
-        return response.Playlists.Playlist;
+        return response.Playlist;
     }
 
     /// <summary>
@@ -778,7 +778,7 @@ public class SubsonicHttpClient
     /// <param name="id">Required. A string which uniquely identifies the file (song) or folder (album/artist) to rate.</param>
     /// <param name="rating">Required. The rating between 1 and 5 (inclusive), or 0 to remove the rating.</param>
     /// <returns>A bool indicating success</returns>
-    public async Task<bool> SetRatingAsync(string id, double rating = 0)
+    public async Task<bool> SetRatingAsync(string id, int rating = 0)
     {
         if (string.IsNullOrWhiteSpace(id))
             throw new ArgumentException("Song ID cannot be null or whitespace.", nameof(id));
