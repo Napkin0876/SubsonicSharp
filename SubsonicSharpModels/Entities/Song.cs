@@ -64,4 +64,10 @@ public record Song
     public int ChannelCount { get; set; }
     [JsonPropertyName("samplingRate")]
     public int SamplingRate { get; set; }
+    [JsonPropertyName("artistId")]
+    public string ArtistId { get; set; }
+    [JsonPropertyName("starred")]
+    public DateTime Starred { get; set; }
+    [JsonPropertyName("userRating")]
+    public int UserRating { get; set; }
 }
