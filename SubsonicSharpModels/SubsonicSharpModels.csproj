@@ -5,6 +5,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>SubsonicSharp</RootNamespace>
+        <PackageId>SubsonicSharp</PackageId>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/YourRepo</RepositoryUrl>
+        <Version>0.0.1</Version>
+        <Authors>David Carson</Authors>
     </PropertyGroup>
 
     <ItemGroup>

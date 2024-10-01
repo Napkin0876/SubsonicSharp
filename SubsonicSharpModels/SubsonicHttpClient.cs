@@ -576,7 +576,7 @@ public class SubsonicHttpClient
     {
         var parameters = new List<KeyValuePair<string, string>>();
 
-        parameters.Add(new KeyValuePair<string, string>(UserNameParameter, playlistId));
+        parameters.Add(new KeyValuePair<string, string>("id", playlistId));
 
         var response =
             await ExecuteAsync<GetPlaylistResponse>(HttpMethod.Get, "getPlaylist", parameters: parameters);

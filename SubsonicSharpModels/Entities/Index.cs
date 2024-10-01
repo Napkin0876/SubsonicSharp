@@ -1,8 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace SubsonicSharp.Entities;
 
 public record Index
 {
-    public string name { get; set; }
-    public IEnumerable<Artist> artist { get; set; }
+    [JsonPropertyName("name")] public string Name { get; set; }
+    [JsonPropertyName("artist")] public IEnumerable<Artist> Artists { get; set; }
 }
 
